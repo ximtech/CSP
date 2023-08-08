@@ -1,0 +1,18 @@
+<div class="container" xmlns:csp="http://www.w3.org/1999/XSL/Transform">
+    <h1>Href Attribute Example</h1>
+    <h1 class="display-2">${message}</h1>
+    <p class="lead">
+        <a href="https://www.freecodecamp.org/contribute/">The freeCodeCamp Contribution Page</a> shows you how and where you can contribute to freeCodeCamp's community and growth.
+    </p>
+
+    <ul class="list-group">
+    <csp:loop status="i" var="value" in="${list}">
+        <csp:if test="${i == 0}">
+            <li class="list-group-item active">${value}</li>
+        </csp:if>
+        <csp:else>
+            <li class="list-group-item">${value}</li>
+        </csp:else>
+    </csp:loop>
+    </ul>
+</div>
