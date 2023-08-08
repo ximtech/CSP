@@ -13,5 +13,6 @@ _deps
 .idea
 /Tests/cmake-build-debug/
 /Tests/cmake-build-debug-mingw/
+/Tests/cmake-build-debug-wsl/
 /cmake-build-debug/
 /cmake-build-debug-coverage/

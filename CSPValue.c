@@ -224,7 +224,6 @@ void freeCspObject(CspObject *object) {
     switch (object->type) {
         case CSP_OBJ_STRING: {
             CspObjectString *strObj = (CspObjectString *) object;
-            free(strObj->chars);
             free(strObj);
             break;
         }

@@ -73,7 +73,6 @@ CspTableString *renderCspTemplate(CspRenderer *renderer) {
 void deleteCspRenderer(CspRenderer *renderer) {
     if (renderer != NULL) {
         freeCspObjects();
-        deleteCspParams(renderer->paramMap);
         deleteTableString(renderer->tableStr);
     }
 }

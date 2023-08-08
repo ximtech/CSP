@@ -37,7 +37,13 @@ target_include_directories(${PROJECT_NAME} PUBLIC
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
 
-target_link_libraries(${PROJECT_NAME} FileUtils)
+
+find_library(MATH_LIBRARY m)
+if(MATH_LIBRARY)
+    target_link_libraries(${PROJECT_NAME} PUBLIC ${MATH_LIBRARY} FileUtils)
+else ()
+    target_link_libraries(${PROJECT_NAME} PUBLIC FileUtils)
+endif()
 
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/${PROJECT_NAME}.h
         DESTINATION ${CMAKE_INSTALL_PREFIX}/include/${PROJECT_NAME})
