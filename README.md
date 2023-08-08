@@ -1,6 +1,9 @@
 # CSP
-CSP (C Server Pages) - A server-side view rendering technology written on C.
-It is designed to be familiar for users of technologies such as JSP, GSP, Freemarker etc., but to be usable in embedded applications
+
+[![tests](https://github.com/ximtech/CSP/actions/workflows/cmake-ci.yml/badge.svg?branch=main)](https://github.com/ximtech/CSP/actions/workflows/cmake-ci.yml)
+
+CSP (C Server Pages) - server-side view rendering technology written on C. 
+It is designed to be familiar for users of technologies such as JSP, GSP, Freemarker etc. and to be usable in embedded applications
 
 ### Dependencies
 - [FileUtils](https://github.com/ximtech/FileUtils)

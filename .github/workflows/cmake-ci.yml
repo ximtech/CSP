@@ -31,11 +31,11 @@ jobs:
       working-directory: ${{github.workspace}}/Tests/cmake-build-debug
       run: ./Tests
 
-#    - name: Upload coverage to Codecov
-#      uses: codecov/codecov-action@v3
-#      with:
-#        gcov: true
-#        files: "*CSPCompiler.c.gcov, *CSPInterpreter.c.gcov, *CSPRenderer.c.gcov, *CSPReport.c.gcov, *CSPTableString.c.gcov, *CSPTemplate.c.gcov, *CSPTokener.c.gcov, *CSPValue.c.gcov"
-#        token: ${{ secrets.CODECOV_TOKEN }}
-#        fail_ci_if_error: true
-#        verbose: true
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        gcov: true
+        files: "*CSPCompiler.c.gcov, *CSPInterpreter.c.gcov, *CSPRenderer.c.gcov, *CSPReport.c.gcov, *CSPTableString.c.gcov, *CSPTemplate.c.gcov, *CSPTokener.c.gcov, *CSPValue.c.gcov"
+        token: ${{ secrets.CODECOV_TOKEN }}
+        fail_ci_if_error: true
+        verbose: true
