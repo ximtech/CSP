@@ -1,6 +1,8 @@
 # CSP
 
 [![tests](https://github.com/ximtech/CSP/actions/workflows/cmake-ci.yml/badge.svg?branch=main)](https://github.com/ximtech/CSP/actions/workflows/cmake-ci.yml)
+[![codecov](https://codecov.io/gh/ximtech/CSP/branch/main/graph/badge.svg?token=POFfaMxu0z)](https://codecov.io/gh/ximtech/CSP)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/97090da742044ae9ac1efa7e13a329c8)](https://app.codacy.com/gh/ximtech/CSP/dashboard)
 
 CSP (C Server Pages) - server-side view rendering technology written on C. 
 It is designed to be familiar for users of technologies such as JSP, GSP, Freemarker etc. and to be usable in embedded applications

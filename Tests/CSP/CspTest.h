@@ -8,7 +8,9 @@
 
     #define GET_CURRENT_DIR _getcwd
 #else
+
     #include <unistd.h>
+
     #define GET_CURRENT_DIR getcwd
 #endif
 
@@ -361,6 +363,7 @@ static const CspTestCase ERROR_TEST_CASE_ARRAY[] = {
         {"<csp:set></csp:set>",                                                      "Mandatory attribute for [set] tag: [var] not found"},
         {"<csp:set var=\"test\"></csp:set>",                                         "Mandatory attribute for [set] tag: [value] not found"},
         {"<csp:loop test=\"test\"></csp:loop>",                                      "Mandatory attribute for [loop] tag: [in] not found"},
+        {"<csp:loop var=\"val\" in=\"obj\"></csp:loop>",                            "Unsupported value type. Only arrays is allowed"},
         {"<csp:render test=\"test\"/>",                                              "Mandatory attribute for [render] tag: [template] not found"},
         {"<csp:render template=\"unclosed/>",                                        "Unterminated attribute value"},
         {"<csp:render template=\"${param\"/>",                                       "No closing '}' found for parameter tag"},
@@ -473,7 +476,13 @@ static MunitResult testHappyPath(const MunitParameter params[], void *data) {
     char currentDir[FILENAME_MAX];
     GET_CURRENT_DIR(currentDir, FILENAME_MAX);
     BufferString *rootPath = SUBSTRING_CSTR(512, currentDir, 0, lastIndexOfCStr(currentDir, FILE_SEP));
-    BufferString *testFilePath = STRING_FORMAT_512("%S" FILE_SEP "CSP" FILE_SEP RESOURCE_DIR FILE_SEP TEST_FILE_NAME, rootPath);
+    BufferString * testFilePath = STRING_FORMAT_512("%S"
+    FILE_SEP
+    "CSP"
+    FILE_SEP
+    RESOURCE_DIR
+    FILE_SEP
+    TEST_FILE_NAME, rootPath);
     File *testFile = NEW_FILE(testFilePath->value);
 
     for (int i = 0; i < ARRAY_SIZE(TEST_CASE_ARRAY); i++) {
@@ -504,7 +513,13 @@ static MunitResult testErrorMessages(const MunitParameter params[], void *data) 
     char currentDir[FILENAME_MAX];
     GET_CURRENT_DIR(currentDir, FILENAME_MAX);
     BufferString *rootPath = SUBSTRING_CSTR(512, currentDir, 0, lastIndexOfCStr(currentDir, FILE_SEP));
-    BufferString *testFilePath = STRING_FORMAT_512("%S" FILE_SEP "CSP" FILE_SEP RESOURCE_DIR FILE_SEP TEST_FILE_NAME, rootPath);
+    BufferString * testFilePath = STRING_FORMAT_512("%S"
+    FILE_SEP
+    "CSP"
+    FILE_SEP
+    RESOURCE_DIR
+    FILE_SEP
+    TEST_FILE_NAME, rootPath);
     File *testFile = NEW_FILE(testFilePath->value);
 
     for (int i = 0; i < ARRAY_SIZE(ERROR_TEST_CASE_ARRAY); i++) {
@@ -537,7 +552,13 @@ static MunitResult fullFeatureTemplateTest(const MunitParameter params[], void *
     char currentDir[FILENAME_MAX];
     GET_CURRENT_DIR(currentDir, FILENAME_MAX);
     BufferString *rootPath = SUBSTRING_CSTR(512, currentDir, 0, lastIndexOfCStr(currentDir, FILE_SEP));
-    BufferString *testFilePath = STRING_FORMAT_512("%S" FILE_SEP "CSP" FILE_SEP RESOURCE_DIR FILE_SEP TEMPLATE_FILE_NAME, rootPath);
+    BufferString * testFilePath = STRING_FORMAT_512("%S"
+    FILE_SEP
+    "CSP"
+    FILE_SEP
+    RESOURCE_DIR
+    FILE_SEP
+    TEMPLATE_FILE_NAME, rootPath);
     File *testFile = NEW_FILE(testFilePath->value);
     File *resultFile = NEW_FILE("../CSP/resources/result.html");
 
