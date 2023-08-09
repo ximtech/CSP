@@ -121,7 +121,7 @@ ${obj.decimal}  // 3.14
 - Use functions `cspAddMapToMap()`, `cspAddVecToMap()`, `cspAddMapToArray()` and `cspAddArrayToArray()`
 - Check `CSPInterpreter.h` for other param functions
 
-### CSP syntax
+## CSP syntax
 
 The syntax of the template derives from the high level programming languages grammar like Java, but enhances it with specific constructs.
 
