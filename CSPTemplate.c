@@ -57,7 +57,7 @@ CspTemplate *newCspTemplate(const char *fileName) {
     cspTemplate->report = report;
     cspTemplate->report->errorMessage = NULL;
 
-    size_t fileNameLength = fileName != NULL ? strlen(fileName) : 0;
+    size_t fileNameLength = fileName != NULL ? strnlen(fileName, PATH_MAX_LEN) : 0;
     if (fileNameLength == 0) {
         formatCspError(cspTemplate->report, "Template file name is empty");
         return cspTemplate;
@@ -161,7 +161,7 @@ static CspTemplate *parseHtmlTemplate(CspTemplate *cspTemplate) {
     uint32_t openedTagCount = 0;
     uint32_t closedTagCount = 0;
 
-    while (*cspTemplate->nextKind != '\0' && CSP_HAS_NO_ERROR(cspTemplate->report) && cspTemplate->remainingLength > 0) {
+    while (*cspTemplate->nextKind != '\0' && CSP_HAS_NO_ERROR(cspTemplate->report)) {
         if (*cspTemplate->nextKind == '\n') {
             cspTemplate->report->lineNumber++;
             moveToNextChar(cspTemplate);
