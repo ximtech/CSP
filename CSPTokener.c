@@ -16,7 +16,6 @@ typedef struct LexerProcessor {
     lexTokenVector *lexVector;
     uint32_t start;
     uint32_t current;
-    uint32_t line;
 } LexerProcessor;
 
 static const char *TAG = "Lexer Token";
@@ -146,8 +145,7 @@ static inline LexerProcessor createLexerProcessor(CspReport *report, lexTokenVec
             .sourceLength = length,
             .lexVector = vec,
             .start = 0,
-            .current = 0,
-            .line = 1};
+            .current = 0};
     return processor;
 }
 
