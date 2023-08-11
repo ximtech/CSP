@@ -462,7 +462,7 @@ static uint32_t parseParamValue(CspTemplate *cspTemplate) {
 }
 
 static void parseTagAttributes(CspTemplate *cspTemplate, attrVector *vector) {
-    while (isspace(*cspTemplate->nextKind)) {  // skip starting whitespaces
+    while (isspace((int) *cspTemplate->nextKind)) {  // skip starting whitespaces
         cspTemplate->nextKind++;
     }
 
