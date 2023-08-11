@@ -70,7 +70,7 @@ CspTemplate *newCspTemplate(const char *fileName) {
 
     File *templateFile = malloc(sizeof(struct File));
     cspTemplate->templateFile = newFile(templateFile, fileName);
-    if (cspTemplate->templateFile == NULL || !isFileExists(cspTemplate->templateFile)) {
+    if (!isFileExists(cspTemplate->templateFile)) {
         formatCspError(cspTemplate->report, "Can't open template file");
         deleteCspTemplateData(cspTemplate);
         return cspTemplate;
