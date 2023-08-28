@@ -4,12 +4,16 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#ifndef HEAP_STRING_ALLOC
-#define HEAP_STRING_ALLOC malloc
+#ifndef CSP_STRING_MALLOC
+#define CSP_STRING_MALLOC malloc
 #endif
 
-#ifndef HEAP_STRING_REALLOC
-#define HEAP_STRING_REALLOC realloc
+#ifndef CSP_STRING_REALLOC
+#define CSP_STRING_REALLOC realloc
+#endif
+
+#ifndef CSP_STRING_FREE
+#define CSP_STRING_FREE free
 #endif
 
 #ifndef TABLE_STR_CAPACITY_MULTIPLIER

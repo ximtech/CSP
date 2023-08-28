@@ -287,7 +287,7 @@ static char *copyStringValue(const char *src, uint16_t length) {
 
 static bool doubleCspValVecCapacity(CspValVector *vector) {
     uint8_t newCapacity = vector->capacity * 2;
-    if (newCapacity > UINT8_MAX) return false;
+    if (newCapacity >= UINT8_MAX) return false;
     return adjustCspValVecCapacity(vector, newCapacity);
 }
 

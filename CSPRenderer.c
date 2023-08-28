@@ -49,7 +49,7 @@ CspTableString *renderCspTemplate(CspRenderer *renderer) {
         return NULL;
     }
 
-    char *templateText = malloc(renderer->cspTemplate->length * sizeof(char) + 1);
+    char *templateText = CSP_STRING_MALLOC(renderer->cspTemplate->length * sizeof(char) + 1);
     if (templateText == NULL) {
         formatCspError(renderer->cspTemplate->report, "[%s] - Memory allocate fail for tmp file buffer", TAG);
         return NULL;
@@ -58,14 +58,14 @@ CspTableString *renderCspTemplate(CspRenderer *renderer) {
     renderer->length = readFileToBuffer(renderer->cspTemplate->templateFile, templateText, renderer->cspTemplate->length);
     if (renderer->length == 0) {
         formatCspError(renderer->cspTemplate->report, "[%s] - File read error", TAG);
-        free(renderer->templateText);
+        CSP_STRING_FREE(templateText);
         renderer->templateText = NULL;
         return NULL;
     }
     renderer->templateText = templateText;
 
     CspTableString *resultStr = renderTemplate(renderer);
-    free(templateText);
+    CSP_STRING_FREE(templateText);
     renderer->templateText = NULL;
     return resultStr;
 }
