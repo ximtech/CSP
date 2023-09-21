@@ -635,7 +635,7 @@ static bool handleArrayRange(CspCompilerProcessor *processor, CspValue arrayObje
         return false;
     }
 
-    for (uint32_t i = AS_CSP_INT(rangeFromValue); i <= AS_CSP_INT(rangeToValue); i++) {
+    for (CSP_INT_TYPE i = AS_CSP_INT(rangeFromValue); i <= AS_CSP_INT(rangeToValue); i++) {
         if (!cspValVecAdd(AS_CSP_ARRAY(arrayObject)->vec, CSP_INT_VALUE(i))) {
             WRITE_COMPILE_ERROR(processor, "Error while adding range value to array");
             return false;
