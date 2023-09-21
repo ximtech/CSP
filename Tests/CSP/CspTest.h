@@ -385,6 +385,10 @@ static const CspTestCase ERROR_TEST_CASE_ARRAY[] = {
         {"${1 / false}",                                                             "Division by zero"},
         {"${true / 0.0}",                                                            "Division by zero"},
         {"${1 / false}",                                                             "Division by zero"},
+        {"${['one'...5]}",                                                           "Invalid range from value! Only int type allowed"},
+        {"${[1...val]}",                                                             "Invalid range to value! Only int type allowed"},
+        {"${[8...6]}",                                                               "Invalid range! From value can't be greater than to value"},
+
 };
 
 static CspObjectMap *getPredefinedParams() {
@@ -472,7 +476,7 @@ static MunitResult testHappyPath(const MunitParameter params[], void *data) {
     char currentDir[FILENAME_MAX];
     GET_CURRENT_DIR(currentDir, FILENAME_MAX);
     BufferString *rootPath = SUBSTRING_CSTR(512, currentDir, 0, lastIndexOfCStr(currentDir, FILE_SEP));
-    BufferString * testFilePath = STRING_FORMAT_512("%S" FILE_SEP "CSP" FILE_SEP RESOURCE_DIR FILE_SEP TEST_FILE_NAME, rootPath);
+    BufferString *testFilePath = STRING_FORMAT_512("%S" FILE_SEP "CSP" FILE_SEP RESOURCE_DIR FILE_SEP TEST_FILE_NAME, rootPath);
     File *testFile = NEW_FILE(testFilePath->value);
 
     for (int i = 0; i < ARRAY_SIZE(TEST_CASE_ARRAY); i++) {
@@ -503,7 +507,7 @@ static MunitResult testErrorMessages(const MunitParameter params[], void *data) 
     char currentDir[FILENAME_MAX];
     GET_CURRENT_DIR(currentDir, FILENAME_MAX);
     BufferString *rootPath = SUBSTRING_CSTR(512, currentDir, 0, lastIndexOfCStr(currentDir, FILE_SEP));
-    BufferString * testFilePath = STRING_FORMAT_512("%S" FILE_SEP "CSP" FILE_SEP RESOURCE_DIR FILE_SEP TEST_FILE_NAME, rootPath);
+    BufferString *testFilePath = STRING_FORMAT_512("%S" FILE_SEP "CSP" FILE_SEP RESOURCE_DIR FILE_SEP TEST_FILE_NAME, rootPath);
     File *testFile = NEW_FILE(testFilePath->value);
 
     for (int i = 0; i < ARRAY_SIZE(ERROR_TEST_CASE_ARRAY); i++) {
@@ -536,7 +540,7 @@ static MunitResult fullFeatureTemplateTest(const MunitParameter params[], void *
     char currentDir[FILENAME_MAX];
     GET_CURRENT_DIR(currentDir, FILENAME_MAX);
     BufferString *rootPath = SUBSTRING_CSTR(512, currentDir, 0, lastIndexOfCStr(currentDir, FILE_SEP));
-    BufferString * testFilePath = STRING_FORMAT_512("%S" FILE_SEP "CSP" FILE_SEP RESOURCE_DIR FILE_SEP TEMPLATE_FILE_NAME, rootPath);
+    BufferString *testFilePath = STRING_FORMAT_512("%S" FILE_SEP "CSP" FILE_SEP RESOURCE_DIR FILE_SEP TEMPLATE_FILE_NAME, rootPath);
     File *testFile = NEW_FILE(testFilePath->value);
     File *resultFile = NEW_FILE("../CSP/resources/result.html");
 
@@ -557,9 +561,12 @@ static MunitResult fullFeatureTemplateTest(const MunitParameter params[], void *
     assert_not_null(strstr(str->value, "<li class=\"list-group-item active\">Danger</li>"));
     assert_not_null(strstr(str->value, "<li class=\"list-group-item\">123</li>"));
     assert_not_null(strstr(str->value, "<li class=\"list-group-item\">1.1</li>"));
-    assert_not_null(strstr(str->value, "<h2>[one, Some Message, 123, 1.23, some]</h2>"));
+    assert_not_null(strstr(str->value, "<h2>[one, Some Message, 123, 1.23, some, 1, 2, 3, 4, 5]</h2>"));
+    assert_not_null(strstr(str->value, "<h2>[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]</h2>"));
+    assert_not_null(strstr(str->value, "<h2>[1, 2, 3, 12345, enabled]</h2>"));
     assert_not_null(strstr(str->value, "k1:Some Message"));
     assert_not_null(strstr(str->value, "<h2>Hello World!!!</h2>"));
+    assert_not_null(strstr(str->value, "<h3>[1, 2, 3, 4, 5]</h3>"));
     assert_not_null(strstr(str->value, "<p>Not empty value == test2!</p>"));
     assert_not_null(strstr(str->value, "<p>Hello test3 visible!</p>"));
     assert_not_null(strstr(str->value, "<p>This 'Else if' should be visible</p>"));

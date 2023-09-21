@@ -31,6 +31,7 @@ static inline CspLexerToken *getPreviousToken(LexerProcessor *processor);
 static uint32_t skipExpCharsWhileStopChar(LexerProcessor *processor, char stopChar);
 
 static inline void handleTernaryOperator(LexerProcessor *processor);
+static inline void handleExpDot(LexerProcessor *processor);
 static inline void handleExpSlash(LexerProcessor *processor);
 static inline void handleExpOr(LexerProcessor *processor);
 static inline void handleExpAnd(LexerProcessor *processor);
@@ -76,6 +77,9 @@ void parseTemplateExpression(CspReport *report, lexTokenVector *tokens, char *ex
                 break;
             case '?':
                 handleTernaryOperator(&processor);
+                break;
+            case '.':
+                handleExpDot(&processor);
                 break;
             case ':':
                 addExpTokenType(&processor, CSP_EXP_COLON);
@@ -210,6 +214,14 @@ static inline void handleTernaryOperator(LexerProcessor *processor) {
     addExpTokenType(processor, CSP_EXP_TERNARY);
 }
 
+static inline void handleExpDot(LexerProcessor *processor) {
+    if (isMatchNext(processor, '.') && isMatchNext(processor, '.')) {
+        addExpTokenType(processor, CSP_EXP_RANGE);
+        return;
+    }
+    WRITE_TOKENER_ERROR(processor, "Unsupported dot operator, only range expression supported");
+}
+
 static inline void handleExpSlash(LexerProcessor *processor) {
     if (isMatchNext(processor, '/')) {
         skipExpCharsWhileStopChar(processor, '\n'); // A comment goes until the end of the line.
@@ -270,6 +282,8 @@ static void handleExpNumericValue(LexerProcessor *processor) {
     bool hasFractionalPart = currentExpChar(processor) == '.';
     if (hasFractionalPart && isdigit((int) nextExpChar(processor))) {    // Look for a fractional part
         advanceExpChar(processor); // Skip "."
+    } else {
+        hasFractionalPart = false;
     }
 
     while (isdigit((int) currentExpChar(processor))) {

@@ -93,6 +93,8 @@ static void parsePrecedence(CspCompilerProcessor *processor, CSPPrecedence prece
 static inline CspLexerToken *advanceToNextToken(CspCompilerProcessor *processor);
 static inline CspLexerToken *getPreviousToken(CspCompilerProcessor *processor);
 static inline CspLexerToken *getCurrentToken(CspCompilerProcessor *processor);
+static void skipTokensUntil(CspCompilerProcessor *processor, CspExprType type);
+
 static inline bool isAtTokensEnd(CspCompilerProcessor *processor);
 static inline CspLexerToken *consumeToken(CspCompilerProcessor *processor, CspExprType type);
 static inline bool isTokenTypeEquals(CspCompilerProcessor *processor, CspExprType type);
@@ -111,6 +113,7 @@ static CspValue getLiteralValueFromToken(CspCompilerProcessor *processor, CspLex
 static bool isCollectionHasEnd(CspCompilerProcessor *processor);
 static CspCollectionType detectCollectionType(CspCompilerProcessor *processor);
 static void handleCollectionArray(CspCompilerProcessor *processor);
+static bool handleArrayRange(CspCompilerProcessor *processor, CspValue arrayObject);
 static void handleCollectionMap(CspCompilerProcessor *processor);
 
 #ifdef CSP_DEBUG_TRACE_EXECUTION
@@ -440,6 +443,13 @@ static inline bool isTokenTypeEquals(CspCompilerProcessor *processor, CspExprTyp
     return getCurrentToken(processor)->type == type;
 }
 
+static void skipTokensUntil(CspCompilerProcessor *processor, CspExprType type) {
+    CspLexerToken *token = getCurrentToken(processor);
+    while(!isAtTokensEnd(processor) && token->type != type) {
+        token = advanceToNextToken(processor);
+    }
+}
+
 static inline const CspParseRule *getParseRule(CspExprType type) {
     return &PARSE_RULES[type];
 }
@@ -579,9 +589,22 @@ static void handleCollectionArray(CspCompilerProcessor *processor) {
 
     while (token->type != CSP_EXP_RIGHT_BRACKET) {
         if (token->type != CSP_EXP_COMMA && token->type != CSP_EXP_LEFT_BRACKET) {
+            CspLexerToken *nextToken = getCurrentToken(processor);
+
+            if (nextToken != NULL && nextToken->type == CSP_EXP_RANGE) {
+                if (!handleArrayRange(processor, arrayObject)) {
+                    skipTokensUntil(processor, CSP_EXP_RIGHT_BRACKET);  // roll up to array end
+                    deleteCspValue(arrayObject);
+                    return;
+                }
+                token = getCurrentToken(processor);
+                continue;
+            }
+
             CspValue value = getLiteralValueFromToken(processor, token);
             if (!cspValVecAdd(AS_CSP_ARRAY(arrayObject)->vec, value)) {
                 WRITE_COMPILE_ERROR(processor, "Error while adding value to array");
+                skipTokensUntil(processor, CSP_EXP_RIGHT_BRACKET);  // roll up to array end
                 deleteCspValue(arrayObject);
                 return;
             }
@@ -593,6 +616,36 @@ static void handleCollectionArray(CspCompilerProcessor *processor) {
     cspChunkAddConstant(processor->chunk, arrayObject);
 }
 
+static bool handleArrayRange(CspCompilerProcessor *processor, CspValue arrayObject) {
+    CspValue rangeFromValue = getLiteralValueFromToken(processor, getPreviousToken(processor));
+    if (!IS_CSP_INT(rangeFromValue)) {
+        WRITE_COMPILE_ERROR(processor, "Invalid range from value! Only int type allowed");
+        return false;
+    }
+    consumeToken(processor, CSP_EXP_RANGE); // skip range token
+
+    CspValue rangeToValue = getLiteralValueFromToken(processor, getCurrentToken(processor));
+    if (!IS_CSP_INT(rangeToValue)) {
+        WRITE_COMPILE_ERROR(processor, "Invalid range to value! Only int type allowed");
+        return false;
+    }
+
+    if (AS_CSP_INT(rangeFromValue) > AS_CSP_INT(rangeToValue)) {
+        WRITE_COMPILE_ERROR(processor, "Invalid range! From value can't be greater than to value");
+        return false;
+    }
+
+    for (uint32_t i = AS_CSP_INT(rangeFromValue); i <= AS_CSP_INT(rangeToValue); i++) {
+        if (!cspValVecAdd(AS_CSP_ARRAY(arrayObject)->vec, CSP_INT_VALUE(i))) {
+            WRITE_COMPILE_ERROR(processor, "Error while adding range value to array");
+            return false;
+        }
+    }
+
+    advanceToNextToken(processor);
+    return true;
+}
+
 static void handleCollectionMap(CspCompilerProcessor *processor) {
     CspValue mapObject = CSP_CONST_MAP_VALUE(16);
     CspLexerToken *token = advanceToNextToken(processor);
@@ -602,6 +655,7 @@ static void handleCollectionMap(CspCompilerProcessor *processor) {
             CspValue mapKey = getLiteralValueFromToken(processor, token);
             if (!IS_CSP_STRING(mapKey)) {
                 WRITE_COMPILE_ERROR(processor, "Map Object: Only string as a key allowed");
+                skipTokensUntil(processor, CSP_EXP_RIGHT_BRACKET);
                 deleteCspValue(mapObject);
                 return;
             }
@@ -609,6 +663,7 @@ static void handleCollectionMap(CspCompilerProcessor *processor) {
             CspLexerToken *colonToken = consumeToken(processor, CSP_EXP_COLON);
             if (colonToken == NULL) {
                 WRITE_COMPILE_ERROR(processor, "Map Object: Missing key value separator ':'");
+                skipTokensUntil(processor, CSP_EXP_RIGHT_BRACKET);
                 deleteCspValue(mapObject);
                 return;
             }
@@ -618,6 +673,7 @@ static void handleCollectionMap(CspCompilerProcessor *processor) {
 
             if (!cspMapPut(AS_CSP_MAP(mapObject)->map, AS_CSP_CSTRING(mapKey), mapValue)) {
                 WRITE_COMPILE_ERROR(processor, "Map Object: Error while adding entry to map");
+                skipTokensUntil(processor, CSP_EXP_RIGHT_BRACKET);
                 deleteCspValue(mapObject);
                 return;
             }

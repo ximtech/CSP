@@ -204,15 +204,19 @@ ${FALSE}
 
 CSP uses a comma-separated array of values, surrounded by square brackets, to denote arrays:
 ```text
-${[]} // empty array
+${[]}       // empty array
 ${[1, 2, 3]}
+${['one', 'two']}
+${[1.0] + 2.0}  // add value to array -> [1.0, 2.0]
+${[0...5]}      // fill array in range -> [0, 1, 2, 3, 4, 5]
 ```
+***Note:*** Range values must be `int` type and compile known constants
 
 You can also create arrays containing values of heterogeneous types
 ```text
-${[1, 'a', true, param.name]}
+${[1, 2...5, 'a', true, param.name]}
 ```
-Array here contains a `number`, `string`, `boolean` and `parameter` value
+Array here contains a `number`, `range`, `string`, `boolean` and `parameter` value
 
 ### Maps
 

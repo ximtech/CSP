@@ -59,6 +59,7 @@ typedef enum CspExprType {
     CSP_EXP_LOGICAL_AND,        // &&
     CSP_EXP_TERNARY,            // 'if ? then : else'
     CSP_EXP_ELVIS,              // Shortening of the ternary operator. 'if ?: else'
+    CSP_EXP_RANGE,              // '...', from-to range -> 0...5 -> 1,2,3,4,5
 } CspExprType;
 
 typedef struct CspLexerToken {

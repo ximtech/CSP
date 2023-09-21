@@ -16,12 +16,18 @@
 
 <div class="container">
 
-<csp:set var="varList" value="['one', message, 123, 1.23, 'some']"/>
+<csp:set var="varListRange" value="[0...9]"/>
+<csp:set var="varListSum" value="[1, 2, 3] + intParam + drop"/>
+<csp:set var="varList" value="['one', message, 123, 1.23, 'some', 1, 2...5]"/>
 <csp:set var="varMap" value="['k1': message, 'k2':6, 'k3':'v3', 'k4':4.4]"/>
+
+<h2>${varListRange}</h2>
+<h2>${varListSum}</h2>
 <h2>${varList}</h2>
 <h2>${varMap}</h2>
 
 <h2>${strParam}</h2>
+<h3>${[1...5]}</h3>
 
 <csp:if test="${obj.str == 'test'}">
     <p>Not empty value == ${obj.obj.str}!</p>
