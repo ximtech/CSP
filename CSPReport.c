@@ -28,7 +28,7 @@ void formatCspParserError(CspReport *report, const char *tag, uint32_t errorAt, 
     va_list argp;
     va_start(argp, format);
     char buffer[CSP_PARSE_ERROR_MESSAGE_LENGTH];
-    uint32_t length = sprintf(buffer, "[%s] - [line: %u]. Error at %u: ", tag, report->lineNumber, errorAt);
+    uint32_t length = sprintf(buffer, "[%s] - [line: %" PRIu32 "]. Error at %" PRIu32 ": ", tag, report->lineNumber, errorAt);
     vsnprintf(buffer + length, CSP_PARSE_ERROR_MESSAGE_LENGTH, format, argp);
     va_end(argp);
     formatCspError(report, buffer);

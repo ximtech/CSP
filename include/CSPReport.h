@@ -1,5 +1,7 @@
 #pragma once
 
+#include "inttypes.h"
+
 #include "BufferString.h"
 
 #define CSP_ERROR_MESSAGE_LENGTH 256
