@@ -38,6 +38,8 @@ static const CspTestCase TEST_CASE_ARRAY[] = {
         {"<h1>${valList}</h1>",                                                       "<h1>[true, false, NULL, 888, 8.0, two]</h1>"},
         {"<h1>${arrayWithObj}</h1>",                                                  "<h1>[Array with map, [str:test4]]</h1>"},
         {"<h1>${arrayWithArray}</h1>",                                                "<h1>[1, 2, 3, [one, two, three]]</h1>"},
+        {"<h1>`${arrayWithArray}`</h1>",                                              "<h1>`${arrayWithArray}`</h1>"},
+        {"<h1>`Params: ${1} ${cronParts.day !== undefined} in str`</h1>",             "<h1>`Params: ${1} ${cronParts.day !== undefined} in str`</h1>"},
 
         // Evaluation
         {"${1}",                                                                      "1"},

@@ -23,6 +23,7 @@ static void skipUntilParamEnd(CspRenderer *renderer);
 static void skipUntilCommentEnd(CspRenderer *renderer);
 static void skipNextWhitespaces(CspRenderer *renderer);
 
+static uint32_t getBacktickQuoteContentLength(CspRenderer *renderer);
 static uint32_t getHtmlCommentLength(CspRenderer *renderer);
 static uint32_t getHtmlTagLength(char *htmlTagString);
 static uint32_t getTemplateParamLength(char *htmlTagString);
@@ -94,6 +95,12 @@ static CspTableString *renderTemplate(CspRenderer *renderer) {
             renderer->lineNumber++;
             tableStringAddChar(renderer->tableStr, *renderer->templateText);
             moveToNextChar(renderer);
+            continue;
+
+        } else if (*renderer->templateText == CSP_HTML_BACKTICK_QUOTE) {
+            uint32_t contentLength = getBacktickQuoteContentLength(renderer);
+            tableStringAdd(renderer->tableStr, renderer->templateText, contentLength);
+            moveFilePointer(renderer, contentLength);
             continue;
 
         } else if (!isStartsWithHtmlTag(renderer->templateText) && !isStartsWithCspParam(renderer->templateText)) {
@@ -413,6 +420,11 @@ static void skipNextWhitespaces(CspRenderer *renderer) {
         moveToNextChar(renderer);
         templateChar = *renderer->templateText;
     }
+}
+
+static uint32_t getBacktickQuoteContentLength(CspRenderer *renderer) {
+    char *backtickEnd = strchr(renderer->templateText + CSP_HTML_QUOTE_LENGTH, CSP_HTML_BACKTICK_QUOTE); // skip opening '`'
+    return (backtickEnd - renderer->templateText) + (CSP_HTML_QUOTE_LENGTH * 2);  // '`'...'`'
 }
 
 static uint32_t getHtmlCommentLength(CspRenderer *renderer) {

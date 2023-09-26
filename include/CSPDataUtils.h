@@ -6,6 +6,8 @@
 
 #define CSP_HTML_TAG_START_CHAR '<'
 #define CSP_HTML_TAG_END_CHAR '>'
+#define CSP_HTML_BACKTICK_QUOTE '`'
+#define CSP_HTML_QUOTE_LENGTH 1
 
 #define CSP_HTML_COMMENT_START "<!--"
 #define CSP_HTML_COMMENT_END "-->"

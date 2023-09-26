@@ -168,6 +168,20 @@ static CspTemplate *parseHtmlTemplate(CspTemplate *cspTemplate) {
             continue;
         }
 
+        if (*cspTemplate->nextKind == CSP_HTML_BACKTICK_QUOTE) {    // need to skip all in backtick quotes '`', because JS have string interpolation with same ${} parameters
+            cspTemplate->nextKind++;
+            char *backtickEnd = strchr(cspTemplate->nextKind, CSP_HTML_BACKTICK_QUOTE);
+            if (backtickEnd == NULL) {
+                formatCspTemplateError(cspTemplate, "Unclosed backtick quote: '`'");
+                return cspTemplate;
+            }
+
+            uint32_t contentLength = (backtickEnd - cspTemplate->nextKind) + CSP_HTML_QUOTE_LENGTH;
+            cspTemplate->remainingLength -= contentLength;
+            cspTemplate->nextKind += contentLength;
+            continue;
+        }
+
         if (*cspTemplate->nextKind != CSP_HTML_TAG_START_CHAR && !isStartsWithCspParam(cspTemplate->nextKind)) {  // check for tag or parameter
             moveToNextChar(cspTemplate);
             continue;
