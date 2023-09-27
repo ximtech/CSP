@@ -351,13 +351,7 @@ ${user.name ? user.name : 'Anonymous'}  // with the ternary operator, you have t
 ${user.name ?: 'Anonymous'}    // with the Elvis operator the value, which is tested, is used if it is not `false`
 ```
 
-### Limitations
-
-1. The `++` (increment) and `--` (decrement) operators are not available
-2. Assignment arithmetic operators (`+=`, `-=`, `*=`, `/=`, `%=`, `**=`) are not available
-3. Bitwise and bit shift operators (`&`, `|`, `^`, `-`, `<<`, `>>`) not supported
-
-### Parameter escaping
+#### Parameter escaping
 
 Sometimes there is need to skip parameters `${}`. For example JS have [string interpolation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals)
 that contains same parameter enclosing symbols that in CSP and can cause conflict situations.
@@ -365,6 +359,12 @@ Thus, to ignore parameter enclose it by backtick (\`) characters:
 ```javascript
 `some text with ${expression} param`
 ```
+
+### Limitations
+
+1. The `++` (increment) and `--` (decrement) operators are not available
+2. Assignment arithmetic operators (`+=`, `-=`, `*=`, `/=`, `%=`, `**=`) are not available
+3. Bitwise and bit shift operators (`&`, `|`, `^`, `-`, `<<`, `>>`) not supported
 
 ## Template Tags
 
