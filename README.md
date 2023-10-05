@@ -78,6 +78,7 @@ printf("%s", result->value);
 // Release resources
 deleteCspRenderer(renderer);
 deleteCspTemplate(cspTemplate);
+deleteCspParams(paramMap);
 
 ```
 #### Output:
