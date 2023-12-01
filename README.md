@@ -64,7 +64,7 @@ CSP supports the usage of `${}` for parameter binding and evaluation:
 ```c
 CspTemplate *cspTemplate = newCspTemplate("index.csp"); // compile template file
 CspObjectMap *params = newCspParamObjMap(8);    // create map to store parameters
-cspAddStrToMap(paramMap, "param", "World!!!");  // add parameter name and value
+cspAddStrToMap(params, "param", "World!!!");  // add parameter name and value
 
 CspRenderer *renderer = NEW_CSP_RENDERER(cspTemplate, params);  // create renderer from template and add parameters
 CspTableString *result = renderCspTemplate(renderer);
