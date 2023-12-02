@@ -14,7 +14,7 @@ static void renderVarTag(CspRenderer *renderer);
 static void renderRenderTag(CspRenderer *renderer);
 static void collapseNextBranchExecution(CspRenderer *renderer);
 static void skipToNextBranchExecution(CspRenderer *renderer);
-static void skipLoopInnerBlock(CspRenderer *renderer, char *htmlTagString);
+static uint32_t skipLoopInnerBlock(CspRenderer *renderer, char *htmlTagString);
 static inline bool hasNextCspBranching(CspRenderer *renderer);
 
 static CspTagNode *getNextTagNode(CspRenderer *renderer, CspTagKind kind);
@@ -212,7 +212,8 @@ static void renderLoopTag(CspRenderer *renderer) {
 
     if (!IS_CSP_ARRAY(loopValue)) {
         formatCspRendererError(renderer, "[" CSP_LOOP_TAG_NAME "] - Unsupported value type. Only arrays is allowed");
-        skipLoopInnerBlock(renderer, renderer->templateText);
+        moveFilePointer(renderer, skipLoopInnerBlock(renderer, renderer->templateText));
+        skipNextWhitespaces(renderer);
         return;
     }
 
@@ -225,6 +226,12 @@ static void renderLoopTag(CspRenderer *renderer) {
     uint32_t fileCharCounter = renderer->length;
 
     CspValVector *paramVec = AS_CSP_ARRAY(loopValue)->vec;
+    if (isCspValVecEmpty(paramVec)) {
+        moveFilePointer(renderer, skipLoopInnerBlock(renderer, renderer->templateText));
+        skipNextWhitespaces(renderer);
+        return;
+    }
+
     for (uint32_t i = 0; i < cspValVecSize(paramVec); i++) {
         CspValue arrayElement = cspValVecGet(paramVec, i);
         renderer->tagIndex = beforeLoopTagIndex;
@@ -364,7 +371,7 @@ static void skipToNextBranchExecution(CspRenderer *renderer) {
     }
 }
 
-static void skipLoopInnerBlock(CspRenderer *renderer, char *htmlTagString) {
+static uint32_t skipLoopInnerBlock(CspRenderer *renderer, char *htmlTagString) {
     uint32_t blockLength = 0;
     while (!isStartsWithCspEndLoop(htmlTagString) && *htmlTagString != '\0') {
         if (isStartsWithHtmlComment(htmlTagString)) {
@@ -374,14 +381,24 @@ static void skipLoopInnerBlock(CspRenderer *renderer, char *htmlTagString) {
         if (isStartsWithCspParam(htmlTagString) || isStartsWithCspOpenTag(htmlTagString) || isStartsWithCspCloseTag(htmlTagString)) {
             renderer->tagIndex++;   // skip inner param
         }
+
+        if (isStartsWithCspLoop(htmlTagString)) {
+            renderer->tagIndex++;
+            uint32_t loopStartTagLength = getHtmlTagLength(htmlTagString);
+            htmlTagString += loopStartTagLength;
+            uint32_t innerBlockLength = skipLoopInnerBlock(renderer, htmlTagString);
+
+            htmlTagString += innerBlockLength;
+            blockLength += (loopStartTagLength + innerBlockLength); // nested block length from tag start to tag end
+            continue;
+        }
+
         blockLength++;
         htmlTagString++;
     }
 
-    moveFilePointer(renderer, blockLength);
     renderer->tagIndex++;   // skip loop closing tag
-    skipUntilTagEnd(renderer);  // remove tag
-    skipNextWhitespaces(renderer);
+    return blockLength + getHtmlTagLength(htmlTagString);   // + length of closing tag
 }
 
 static inline bool hasNextCspBranching(CspRenderer *renderer) {

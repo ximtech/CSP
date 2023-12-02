@@ -470,6 +470,10 @@ static CspObjectMap *getPredefinedParams() {
     cspAddStrToArray(innerArray_2, "three");
     cspAddArrayToArray(innerArray_2, arrayWithArray);
     cspAddVecToMap(arrayWithArray, paramMap, "arrayWithArray");
+
+    // Empty values
+    CspObjectArray *emptyArray = newCspParamObjArray(8);
+    cspAddVecToMap(emptyArray, paramMap, "emptyList");
     return paramMap;
 }
 
@@ -592,6 +596,7 @@ static MunitResult fullFeatureTemplateTest(const MunitParameter params[], void *
     assert_not_null(strstr(str->value, "<li class=\"list-group-item\">123</li>"));
     assert_not_null(strstr(str->value, "<li class=\"list-group-item\">1.23</li>"));
     assert_not_null(strstr(str->value, "<li class=\"list-group-item\">some</li>"));
+    assert_not_null(strstr(str->value, "<p>This should be visible collapsing empty array</p>"));
 
     // Should not be present in result
     assert_null(strstr(str->value, "<p>Hello not visible!</p>"));
@@ -599,6 +604,9 @@ static MunitResult fullFeatureTemplateTest(const MunitParameter params[], void *
     assert_null(strstr(str->value, "<p>Logic not working!!!</p>"));
     assert_null(strstr(str->value, "<p>Logic works for nesting!!!</p>"));
     assert_null(strstr(str->value, "<p>You test are not welcome here</p>"));
+    // Empty array test
+    assert_null(strstr(str->value, "<p>This should not be visible in empty array:"));
+    assert_null(strstr(str->value, "<p>This should not be visible also in empty array:"));
 
     return MUNIT_OK;
 }

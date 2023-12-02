@@ -105,6 +105,17 @@
 </csp:loop>
 </ul>
 
+<div class="container">
+    <csp:loop var="val" in="${emptyList}">
+        <p>This should not be visible in empty array: ${val}</p>
+        <csp:loop var="val2" in="${valList}">
+                <p>This should not be visible also in empty array: ${val2}</p>
+        </csp:loop>
+    </csp:loop>
+
+    <p>This should be visible collapsing empty array</p>
+</div>
+
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
