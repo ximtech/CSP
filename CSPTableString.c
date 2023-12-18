@@ -44,8 +44,8 @@ void tableStringAddChar(CspTableString *str, char charToAdd) {
         char *reValue = CSP_STRING_REALLOC(str->value, sizeof(char) * str->capacity + 1);
         if (reValue != NULL) {
             str->value = reValue;
-            memset(reValue + str->length, 0, (str->capacity - str->length) + 1);
         }
+        memset(reValue + str->length, 0, (str->capacity - str->length) + 1);
     }
     str->value[str->length++] = charToAdd;
 }

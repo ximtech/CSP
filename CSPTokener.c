@@ -334,14 +334,9 @@ static void addExpTokenType(LexerProcessor *processor, CspExprType type) {
 }
 
 static void addExpToken(LexerProcessor *processor, CspExprType type, void *tokenValue) {
-    if (tokenValue == NULL) {
-        WRITE_TOKENER_ERROR(processor, "Mandatory field: [value] can't be null");
-        return;
-    }
-
     CspLexerToken *token = malloc(sizeof(struct CspLexerToken));
-    void *value = saveExpValue(processor, type, tokenValue);
-    if (token == NULL || value == NULL) {
+    void *value = tokenValue != NULL ? saveExpValue(processor, type, tokenValue) : NULL;
+    if (token == NULL || (tokenValue != NULL && value == NULL)) {
         WRITE_TOKENER_ERROR(processor, "Memory allocation fail for 'CspLexerToken' struct");
         free(token);
         return;
