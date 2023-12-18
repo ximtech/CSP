@@ -334,9 +334,14 @@ static void addExpTokenType(LexerProcessor *processor, CspExprType type) {
 }
 
 static void addExpToken(LexerProcessor *processor, CspExprType type, void *tokenValue) {
+    if (tokenValue == NULL) {
+        WRITE_TOKENER_ERROR(processor, "Mandatory field: [value] can't be null");
+        return;
+    }
+
     CspLexerToken *token = malloc(sizeof(struct CspLexerToken));
-    void *value = tokenValue != NULL ? saveExpValue(processor, type, tokenValue) : NULL;
-    if (token == NULL || (tokenValue != NULL && value == NULL)) {
+    void *value = saveExpValue(processor, type, tokenValue);
+    if (token == NULL || value == NULL) {
         WRITE_TOKENER_ERROR(processor, "Memory allocation fail for 'CspLexerToken' struct");
         free(token);
         return;
@@ -352,11 +357,6 @@ static void addExpToken(LexerProcessor *processor, CspExprType type, void *token
 }
 
 static void *saveExpValue(LexerProcessor *processor, CspExprType type, char *value) {
-    if (value == NULL) {
-        WRITE_TOKENER_ERROR(processor, "Mandatory field: [value] can't be null");
-        return NULL;
-    }
-
     if (type != CSP_EXP_NUMBER_INT && type != CSP_EXP_NUMBER_FLOAT) {   // String literals, NULL, variable name
         char *tokenValue = malloc(sizeof(char) * strlen(value) + 1);
         if (tokenValue == NULL) {
